@@ -24,17 +24,13 @@
 
 <body class="film-mode">
 
-  <!-- 噪点 GIF -->
+  <!-- 全屏噪点 -->
   <div class="noise"></div>
-
-  <!-- 胶片竖线层 -->
-  <div class="film"></div>
 
   <!-- 上下遮罩（3:4） -->
   <div class="mask top"></div>
   <div class="mask bottom"></div>
 
-  <!-- 内容 -->
   <main id="content" class="locked">
 
     <!-- 片头 -->
@@ -46,7 +42,7 @@
       <br><br>
       接下来我们继续给噪点也添加上动画，同样也是通过keyframes帧动画来实现。
       <br><br>
-      （这里可以继续加入更多正文，用于测试滚动）
+      （你可以在这里继续加很多正文内容，用来测试滚动到结尾）
       <br><br><br><br><br><br>
     </div>
 
@@ -55,12 +51,11 @@
 
   </main>
 
-  <!-- 模式切换按钮 -->
+  <!-- 模式切换 -->
   <button id="modeToggle">
     <i class="fa-solid fa-film"></i>
   </button>
 
-  <!-- JS -->
   <script>
     const body = document.body;
     const toggleBtn = document.getElementById('modeToggle');
@@ -86,7 +81,7 @@
         icon.className = 'fa-solid fa-book';
 
         title.classList.remove('develop');
-        endTitle.classList.add('show');
+        endTitle.classList.add('show'); // 书本模式直接显示 end
         content.classList.remove('locked');
       }
     }
@@ -103,7 +98,7 @@
       }
     });
 
-    /* 滚动到底 → 片尾显影 */
+    /* 滚动到结尾 → 片尾显影 */
     content.addEventListener('scroll', () => {
       if (mode !== 'film') return;
 
