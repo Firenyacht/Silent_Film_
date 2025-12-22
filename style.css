@@ -6,12 +6,11 @@
 
 html, body {
   height: 100%;
-  background: #000;
   overflow: hidden;
   font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-/* ========= App ========= */
+/* ================= App ================= */
 #app {
   width: 100vw;
   height: 100vh;
@@ -19,22 +18,21 @@ html, body {
   flex-direction: column;
 }
 
-/* ========= 遮罩（最上层）========= */
+/* ================= 遮罩（最上层，纯黑） ================= */
 .mask {
   width: 100%;
   background: #000;
   z-index: 30;
 }
 
-/* ========= 放映窗口 ========= */
+/* ================= 放映窗口 ================= */
 #stage {
   position: relative;
   width: 100%;
-  background: #fff;
   overflow: hidden;
 }
 
-/* ========= 内容（最底层）========= */
+/* ================= 内容（最底层） ================= */
 #content {
   position: relative;
   z-index: 1;
@@ -42,11 +40,10 @@ html, body {
   overflow-y: auto;
   padding: 2.5rem 2rem;
   line-height: 1.75;
-  color: #000;
   font-size: var(--base-font);
 }
 
-/* ========= 标题 / 结尾 ========= */
+/* ================= 标题 / 结尾 ================= */
 .film-title,
 .film-end {
   font-family: 'Cinzel', serif;
@@ -60,7 +57,6 @@ html, body {
   margin: 2rem 0 3rem;
 }
 
-/* —— 放映机模式显影动画 —— */
 .film-title.develop {
   opacity: 0;
   filter: blur(6px) brightness(0.6);
@@ -73,7 +69,7 @@ html, body {
   margin: 4rem 0 2rem;
 }
 
-/* ========= 特效层（全屏，内容之上）========= */
+/* ================= 特效层（全屏） ================= */
 .effects {
   position: fixed;
   inset: 0;
@@ -81,7 +77,7 @@ html, body {
   z-index: 10;
 }
 
-/* ========= 竖线（保持原逻辑）========= */
+/* ================= 白色竖线 ================= */
 .film::before,
 .film::after {
   content: '';
@@ -92,7 +88,7 @@ html, body {
   height: 100vh;
   background: repeating-linear-gradient(
     90deg,
-    rgba(0,0,0,0.18) 0 2px,
+    rgba(255,255,255,0.18) 0 2px,
     transparent 4px 38vmin
   );
 }
@@ -106,21 +102,89 @@ html, body {
   animation: effect-scratch 2.2s infinite;
 }
 
-/* ========= 噪点（使用 noise.gif）========= */
+/* ================= 白色噪点（noise.gif） ================= */
 .noise::before {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   content: "";
-  opacity: 0.1;
-  z-index: 11;
-  pointer-events: none;
+  position: fixed;
+  inset: 0;
   background: url("noise.gif");
+  opacity: 0.12;
+  mix-blend-mode: screen;
 }
 
-/* ========= 动画 ========= */
+/* ================= 放映机模式 ================= */
+body.film {
+  background: #111;
+}
+
+body.film #stage {
+  background: #1a1a1a;
+}
+
+body.film #content {
+  color: #f5f5f5;
+}
+
+/* ================= 书本模式 ================= */
+body.book {
+  background: #fff;
+}
+
+body.book #stage {
+  background: #fff;
+  height: 100vh !important;
+}
+
+body.book #content {
+  color: #000;
+}
+
+body.book .effects,
+body.book .mask {
+  display: none;
+}
+
+body.book .film-title {
+  opacity: 1;
+  filter: none;
+  animation: none;
+}
+
+/* ================= 横屏提示 ================= */
+#orientation-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+}
+
+#orientation-hint.active {
+  display: flex;
+}
+
+/* ================= 切换按钮 ================= */
+#toggle {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 22px;
+  z-index: 50;
+}
+
+/* ================= 动画 ================= */
 @keyframes film-title-develop {
   0% { opacity: 0; filter: blur(6px) brightness(0.5); }
   35% { opacity: .45; filter: blur(4px) brightness(0.7); }
@@ -140,59 +204,4 @@ html, body {
 @keyframes effect-scratch {
   0% { transform: translateX(0); }
   100% { transform: translateX(25%); }
-}
-
-/* ========= 阅读模式 ========= */
-.book #stage {
-  height: 100vh !important;
-  background: #000;
-}
-
-.book #content {
-  color: #fff;
-}
-
-.book .effects,
-.book .mask {
-  display: none;
-}
-
-.book .film-title {
-  opacity: 1;
-  filter: none;
-  animation: none;
-}
-
-/* ========= 横屏提示 ========= */
-#orientation-hint {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  background: rgba(0,0,0,0.45);
-  color: #fff;
-  font-size: 1.2rem;
-  letter-spacing: 0.1em;
-}
-
-#orientation-hint.active {
-  display: flex;
-}
-
-/* ========= 切换按钮 ========= */
-#toggle {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: none;
-  background: #111;
-  color: #fff;
-  font-size: 22px;
-  z-index: 50;
 }
