@@ -716,7 +716,7 @@
 <div id="orientation-hint">请竖屏观看</div>
 
 <button id="toggle">
-  <i class="fa-regular fa-film"></i>
+  <i class="fa-solid fa-film"></i>
 </button>
 
 <script>
@@ -763,7 +763,7 @@ function applyMode() {
   document.body.className = mode === 'book' ? 'book' : '';
 
   if (mode === 'film') {
-    toggleIcon.className = 'fa-regular fa-film';
+    toggleIcon.className = 'fa-solid fa-film';
     content.classList.add('locked');
     endText.classList.remove('reveal');
     endRevealed = false;
@@ -822,6 +822,7 @@ checkOrientation();
 </script>
 </body>
 </html>
+
 
 
 
