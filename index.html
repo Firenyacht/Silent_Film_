@@ -8,7 +8,7 @@
   <!-- Cinzel -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome (line style) -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <link rel="stylesheet" href="style.css">
@@ -17,23 +17,26 @@
 <body>
 <div id="app">
 
-  <!-- 上遮罩 -->
   <div class="mask" id="mask-top"></div>
 
-  <!-- 放映区域 -->
   <div id="stage">
 
-    <!-- 内容（最底层） -->
+    <!-- 内容层 -->
     <div id="content">
-      <div class="film-title">Silent Movie</div>
+      <div class="film-title develop">Silent Movie</div>
 
       在这里，为了体现竖线动画的随机性，我们给 :before 和 :after 伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置在水平方向上会进行平移。
       接下来我们继续给噪点也添加上动画，同样也是通过 keyframes 帧动画来实现。
+      <br><br>
+      在这里，为了体现竖线动画的随机性，我们给 :before 和 :after 伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置在水平方向上会进行平移。
+      接下来我们继续给噪点也添加上动画，同样也是通过 keyframes 帧动画来实现。
+      <br><br>
+      在这里，为了体现竖线动画的随机性，我们给 :before 和 :after 伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置在水平方向上会进行平移。
 
       <div class="film-end">end</div>
     </div>
 
-    <!-- 特效层（全屏） -->
+    <!-- 特效层 -->
     <div class="effects">
       <div class="film"></div>
       <div class="noise"></div>
@@ -41,33 +44,31 @@
 
   </div>
 
-  <!-- 下遮罩 -->
   <div class="mask" id="mask-bottom"></div>
 </div>
 
-<!-- 横屏提示 -->
 <div id="orientation-hint">请竖屏观看</div>
 
-<!-- 切换按钮 -->
 <button id="toggle">
   <i class="fa-regular fa-film"></i>
 </button>
 
 <script>
-/* ========= 模式（默认放映机） ========= */
+/* ========= 模式 ========= */
 let mode = localStorage.getItem('mode') || 'film';
 
 const title = document.querySelector('.film-title');
+const content = document.getElementById('content');
+const endText = document.querySelector('.film-end');
 const toggleBtn = document.getElementById('toggle');
 const toggleIcon = toggleBtn.querySelector('i');
 const maskTop = document.getElementById('mask-top');
 const maskBottom = document.getElementById('mask-bottom');
 const stage = document.getElementById('stage');
 
-/* ========= 字体大小：线性映射 =========
-   360px → 16px
-   800px → 36px
-*/
+let endRevealed = false;
+
+/* ========= 字体 ========= */
 function updateFontSize() {
   const w = window.innerWidth;
   const size = 16 + (w - 360) * (20 / 440);
@@ -77,13 +78,12 @@ function updateFontSize() {
   );
 }
 
-/* ========= 遮罩规则（3:4）========= */
+/* ========= 遮罩 ========= */
 function updateMask() {
   if (mode !== 'film') return;
 
   const W = window.innerWidth;
   const H = window.innerHeight;
-
   const visibleH = W * 3 / 4;
   const maskH = Math.max(0, (H - visibleH) / 2);
 
@@ -92,32 +92,51 @@ function updateMask() {
   stage.style.height = visibleH + 'px';
 }
 
-/* ========= 应用模式 ========= */
+/* ========= 模式应用 ========= */
 function applyMode() {
   document.body.className = mode === 'book' ? 'book' : '';
 
   if (mode === 'film') {
-    title.classList.add('develop');
     toggleIcon.className = 'fa-regular fa-film';
+    content.classList.add('locked');
+    endText.classList.remove('reveal');
+    endRevealed = false;
   } else {
-    title.classList.remove('develop');
     toggleIcon.className = 'fa-solid fa-book';
+    content.classList.remove('locked');
+    endText.classList.add('reveal');
   }
 
   updateMask();
 }
 
-/* ========= 方向检测 ========= */
+/* ========= 标题显影结束 → 解锁滚动 ========= */
+title.addEventListener('animationend', () => {
+  if (mode === 'film') {
+    content.classList.remove('locked');
+  }
+});
+
+/* ========= 滚动到底 → 显影 end ========= */
+content.addEventListener('scroll', () => {
+  if (mode !== 'film' || endRevealed) return;
+
+  const nearBottom =
+    content.scrollTop + content.clientHeight >= content.scrollHeight - 20;
+
+  if (nearBottom) {
+    endText.classList.add('reveal');
+    endRevealed = true;
+  }
+});
+
+/* ========= 横竖屏 ========= */
 function checkOrientation() {
   const hint = document.getElementById('orientation-hint');
-  if (window.innerWidth > window.innerHeight) {
-    hint.classList.add('active');
-  } else {
-    hint.classList.remove('active');
-  }
+  hint.classList.toggle('active', window.innerWidth > window.innerHeight);
 }
 
-/* ========= 事件 ========= */
+/* ========= 切换 ========= */
 toggleBtn.onclick = () => {
   mode = mode === 'film' ? 'book' : 'film';
   localStorage.setItem('mode', mode);
@@ -137,4 +156,3 @@ checkOrientation();
 </script>
 </body>
 </html>
-
