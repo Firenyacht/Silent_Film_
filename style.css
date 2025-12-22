@@ -8,10 +8,9 @@ html, body {
   height: 100%;
   background: #000;
   overflow: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-/* ========= App ========= */
+/* ========= 容器 ========= */
 #app {
   width: 100vw;
   height: 100vh;
@@ -19,7 +18,7 @@ html, body {
   flex-direction: column;
 }
 
-/* ========= 遮罩（最上层）========= */
+/* ========= 遮罩 ========= */
 .mask {
   width: 100%;
   background: #000;
@@ -35,16 +34,21 @@ html, body {
   overflow: hidden;
 }
 
-/* ========= 内容（最底层）========= */
+/* ========= 内容 ========= */
 #content {
   position: relative;
   z-index: 1;
   height: 100%;
-  overflow-y: auto;
   padding: 2.5rem 2rem;
   line-height: 1.75;
-  color: #000;
   font-size: var(--base-font);
+  color: #000;
+  overflow-y: auto;
+}
+
+/* —— 锁定滚动 —— */
+#content.locked {
+  overflow: hidden;
 }
 
 /* ========= 标题 / 结尾 ========= */
@@ -61,20 +65,25 @@ html, body {
   margin: 2rem 0 3rem;
 }
 
-/* —— 放映机显影动画 —— */
+/* —— 显影动画 —— */
 .film-title.develop {
   opacity: 0;
   filter: blur(6px) brightness(0.6);
-  animation: film-title-develop 4.2s ease-out forwards;
-  animation-delay: 1.2s;
+  animation: develop 4.2s ease-out forwards;
 }
 
 .film-end {
-  font-size: 1.2em;
   margin: 4rem 0 2rem;
+  font-size: 1.2em;
+  opacity: 0;
+  filter: blur(4px);
 }
 
-/* ========= 特效层（全屏，内容之上）========= */
+.film-end.reveal {
+  animation: develop 3s ease-out forwards;
+}
+
+/* ========= 特效 ========= */
 .effects {
   position: fixed;
   inset: 0;
@@ -82,13 +91,10 @@ html, body {
   z-index: 10;
 }
 
-/* ========= 竖线 ========= */
 .film::before,
 .film::after {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
   width: 120vw;
   height: 100vh;
   background: repeating-linear-gradient(
@@ -107,40 +113,29 @@ html, body {
   animation: effect-scratch 2.2s infinite;
 }
 
-/* ========= 噪点（GIF）========= */
 .noise::before {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   content: "";
-  opacity: 0.1;
-  z-index: 11;
-  pointer-events: none;
+  position: fixed;
+  inset: 0;
   background: url("noise.gif");
+  opacity: 0.1;
 }
 
 /* ========= 动画 ========= */
-@keyframes film-title-develop {
+@keyframes develop {
   0%   { opacity: 0; filter: blur(6px) brightness(0.5); }
-  35%  { opacity: .45; filter: blur(4px) brightness(0.7); }
-  55%  { opacity: .85; filter: blur(2px) brightness(0.85); }
-  62%  { filter: blur(1.8px) brightness(1.15); }
-  68%  { filter: blur(2px) brightness(0.9); }
+  60%  { opacity: .85; filter: blur(2px) brightness(1.1); }
   100% { opacity: 1; filter: blur(0) brightness(1); }
 }
 
 @keyframes film-scratch {
   0%,100% { transform: translateX(0); }
-  25%     { transform: translateX(-2%); }
-  50%     { transform: translateX(3%); }
-  75%     { transform: translateX(-1%); }
+  50% { transform: translateX(3%); }
 }
 
 @keyframes effect-scratch {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(25%); }
+  from { transform: translateX(0); }
+  to   { transform: translateX(25%); }
 }
 
 /* ========= 阅读模式 ========= */
@@ -158,32 +153,29 @@ html, body {
   display: none;
 }
 
-.book .film-title {
+.book .film-end {
   opacity: 1;
   filter: none;
-  animation: none;
 }
 
 /* ========= 横屏提示 ========= */
 #orientation-hint {
   position: fixed;
   inset: 0;
-  z-index: 100;
   display: none;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
   background: rgba(0,0,0,0.45);
   color: #fff;
-  font-size: 1.2rem;
-  letter-spacing: 0.1em;
+  z-index: 100;
 }
 
 #orientation-hint.active {
   display: flex;
 }
 
-/* ========= 切换按钮 ========= */
+/* ========= 按钮 ========= */
 #toggle {
   position: fixed;
   bottom: 1rem;
@@ -197,3 +189,4 @@ html, body {
   font-size: 22px;
   z-index: 50;
 }
+
