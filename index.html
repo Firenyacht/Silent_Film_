@@ -1,139 +1,93 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Silent Movie</title>
 
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
   <!-- Cinzel -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome (line style) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
 </head>
 
-<body>
-<div id="app">
+<body class="film-mode">
 
-  <!-- 上遮罩 -->
-  <div class="mask" id="mask-top"></div>
+  <!-- 全屏噪点（仅放映机模式显示） -->
+  <div class="noise"></div>
 
-  <!-- 放映区域 -->
-  <div id="stage">
+  <!-- 上下遮罩 -->
+  <div class="mask top"></div>
+  <div class="mask bottom"></div>
 
-    <!-- 内容（最底层） -->
-    <div id="content">
-      <div class="film-title">Silent Movie</div>
+  <!-- 内容区域 -->
+  <main id="content" class="locked">
+    <h1 id="filmTitle" class="film-title develop">Silent Movie</h1>
 
-      在这里，为了体现竖线动画的随机性，我们给 :before 和 :after 伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置在水平方向上会进行平移。
-      接下来我们继续给噪点也添加上动画，同样也是通过 keyframes 帧动画来实现。
-
-      <div class="film-end">end</div>
+    <div class="markdown">
+      在这里，为了体现竖线动画的随机性，我们给:before和:after伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置再水平方向上会进行平移。
+      <br><br>
+      接下来我们继续给噪点也添加上动画，同样也是通过keyframes帧动画来实现。
     </div>
 
-    <!-- 特效层（全屏） -->
-    <div class="effects">
-      <div class="film"></div>
-      <div class="noise"></div>
-    </div>
+    <h2 class="film-end">end</h2>
+  </main>
 
-  </div>
+  <!-- 模式切换按钮 -->
+  <button id="modeToggle">
+    <i class="fa-solid fa-film"></i>
+  </button>
 
-  <!-- 下遮罩 -->
-  <div class="mask" id="mask-bottom"></div>
-</div>
+  <!-- JS（直接内联，不新建文件） -->
+  <script>
+    const body = document.body;
+    const toggleBtn = document.getElementById('modeToggle');
+    const icon = toggleBtn.querySelector('i');
+    const title = document.getElementById('filmTitle');
+    const content = document.getElementById('content');
 
-<!-- 横屏提示 -->
-<div id="orientation-hint">请竖屏观看</div>
+    let mode = 'film';
 
-<!-- 切换按钮 -->
-<button id="toggle">
-  <i class="fa-regular fa-film"></i>
-</button>
+    function applyMode() {
+      if (mode === 'film') {
+        body.classList.add('film-mode');
+        body.classList.remove('book-mode');
+        icon.className = 'fa-solid fa-film';
 
-<script>
-/* ========= 模式（默认放映机） ========= */
-let mode = localStorage.getItem('mode') || 'film';
+        title.classList.add('develop');
+        content.classList.add('locked');
+      } else {
+        body.classList.add('book-mode');
+        body.classList.remove('film-mode');
+        icon.className = 'fa-solid fa-book';
 
-const title = document.querySelector('.film-title');
-const toggleBtn = document.getElementById('toggle');
-const toggleIcon = toggleBtn.querySelector('i');
-const maskTop = document.getElementById('mask-top');
-const maskBottom = document.getElementById('mask-bottom');
-const stage = document.getElementById('stage');
+        title.classList.remove('develop');
+        content.classList.remove('locked');
+      }
+    }
 
-/* ========= 字体大小：线性映射 =========
-   360px → 16px
-   800px → 36px
-*/
-function updateFontSize() {
-  const w = window.innerWidth;
-  const size = 16 + (w - 360) * (20 / 440);
-  document.documentElement.style.setProperty(
-    '--base-font',
-    Math.round(size) + 'px'
-  );
-}
+    toggleBtn.addEventListener('click', () => {
+      mode = mode === 'film' ? 'book' : 'film';
+      applyMode();
+    });
 
-/* ========= 遮罩规则（3:4）========= */
-function updateMask() {
-  if (mode !== 'film') return;
+    // 🎬 标题显影完成后，解锁正文滚动
+    title.addEventListener('animationend', () => {
+      if (mode === 'film') {
+        content.classList.remove('locked');
+      }
+    });
 
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-
-  const visibleH = W * 3 / 4;
-  const maskH = Math.max(0, (H - visibleH) / 2);
-
-  maskTop.style.height = maskH + 'px';
-  maskBottom.style.height = maskH + 'px';
-  stage.style.height = visibleH + 'px';
-}
-
-/* ========= 应用模式 ========= */
-function applyMode() {
-  document.body.className = mode === 'book' ? 'book' : '';
-
-  if (mode === 'film') {
-    title.classList.add('develop');
-    toggleIcon.className = 'fa-regular fa-film';
-  } else {
-    title.classList.remove('develop');
-    toggleIcon.className = 'fa-solid fa-book';
-  }
-
-  updateMask();
-}
-
-/* ========= 方向检测 ========= */
-function checkOrientation() {
-  const hint = document.getElementById('orientation-hint');
-  if (window.innerWidth > window.innerHeight) {
-    hint.classList.add('active');
-  } else {
-    hint.classList.remove('active');
-  }
-}
-
-/* ========= 事件 ========= */
-toggleBtn.onclick = () => {
-  mode = mode === 'film' ? 'book' : 'film';
-  localStorage.setItem('mode', mode);
-  applyMode();
-};
-
-window.addEventListener('resize', () => {
-  updateFontSize();
-  updateMask();
-  checkOrientation();
-});
-
-/* ========= 初始化 ========= */
-applyMode();
-updateFontSize();
-checkOrientation();
-</script>
+    applyMode();
+  </script>
 </body>
 </html>
