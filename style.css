@@ -86,11 +86,12 @@ body {
 }
 
 .book-mode .noise,
+.book-mode .film,
 .book-mode .mask {
   display: none;
 }
 
-/* ========= 遮罩（3:4） ========= */
+/* ========= 上下遮罩（3:4） ========= */
 
 .mask {
   position: fixed;
@@ -110,13 +111,25 @@ body {
   height: calc((100vh - (100vw * 4 / 3)) / 2);
 }
 
-/* ========= 竖线胶片层 ========= */
+/* ========= 噪点 ========= */
+
+.noise::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url(noise.gif);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ========= 胶片竖线 ========= */
 
 .film {
   position: fixed;
   inset: 0;
-  z-index: 2;
   pointer-events: none;
+  z-index: 2;
   filter: blur(0.45px) drop-shadow(0 0 0 #fff1);
 }
 
@@ -161,23 +174,6 @@ body {
   100% { transform: translateX(20%); }
 }
 
-/* 书本模式隐藏 */
-.book-mode .film {
-  display: none;
-}
-
-/* ========= 噪点 ========= */
-
-.noise::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: url(noise.gif);
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: 2;
-}
-
 /* ========= 切换按钮 ========= */
 
 #modeToggle {
@@ -193,4 +189,3 @@ body {
   font-size: 20px;
   z-index: 10;
 }
-
