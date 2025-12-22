@@ -113,7 +113,7 @@ body {
   position: fixed;
   inset: 0;
   background: url(noise.gif);
-  opacity: 0.1;
+  opacity: 0.08;
   pointer-events: none;
   z-index: 2;
 }
@@ -133,3 +133,4 @@ body {
   font-size: 20px;
   z-index: 10;
 }
+
