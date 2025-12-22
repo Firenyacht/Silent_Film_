@@ -9,9 +9,9 @@
 }
 
 body {
-  font-family: system-ui, sans-serif;
   background: black;
   overflow: hidden;
+  font-family: system-ui, sans-serif;
 }
 
 /* ========= 内容区域 ========= */
@@ -39,19 +39,23 @@ body {
   font-weight: 700;
 }
 
+/* 片头 */
 .film-title {
   margin-bottom: 3rem;
   opacity: 0;
 }
 
+/* 片尾 */
 .film-end {
   margin-top: 5rem;
+  opacity: 0;
+  filter: blur(6px);
 }
 
-/* 胶片显影动画（仅放映机模式） */
-.film-title.develop {
+/* 显影动画 */
+.develop,
+.film-end.show {
   animation: develop 4.2s ease-out forwards;
-  animation-delay: 1.2s;
 }
 
 @keyframes develop {
