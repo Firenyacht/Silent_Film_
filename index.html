@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silent Movie</title>
+
+  <!-- Cinzel -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="app">
+
+  <!-- 上遮罩 -->
+  <div class="mask" id="mask-top"></div>
+
+  <!-- 放映区域 -->
+  <div id="stage">
+
+    <!-- 内容（最底层） -->
+    <div id="content">
+      <div class="film-title">Silent Movie</div>
+
+      在这里，为了体现竖线动画的随机性，我们给 :before 和 :after 伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置在水平方向上会进行平移。
+      接下来我们继续给噪点也添加上动画，同样也是通过 keyframes 帧动画来实现。
+
+      <div class="film-end">end</div>
+    </div>
+
+    <!-- 特效层（全屏） -->
+    <div class="effects">
+      <div class="film"></div>
+      <div class="noise"></div>
+    </div>
+
+  </div>
+
+  <!-- 下遮罩 -->
+  <div class="mask" id="mask-bottom"></div>
+</div>
+
+<!-- 横屏提示 -->
+<div id="orientation-hint">请竖屏观看</div>
+
+<!-- 切换按钮 -->
+<button id="toggle">📽</button>
+
+<script>
+/* ========= 模式 ========= */
+let mode = localStorage.getItem('mode') || 'film';
+const title = document.querySelector('.film-title');
+
+/* ========= 字体线性映射 =========
+   360px → 16px
+   800px → 36px
+*/
+function updateFontSize() {
+  const w = window.innerWidth;
+  const size = 16 + (w - 360) * (20 / 440);
+  document.documentElement.style.setProperty('--base-font', Math.round(size) + 'px');
+}
+
+/* ========= 遮罩（3:4）========= */
+function updateMask() {
+  if (mode === 'book') return;
+
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const visibleH = W * 3 / 4;
+  const maskH = Math.max(0, (H - visibleH) / 2);
+
+  maskTop.style.height = maskH + 'px';
+  maskBottom.style.height = maskH + 'px';
+  stage.style.height = visibleH + 'px';
+}
+
+/* ========= 应用模式 ========= */
+function applyMode() {
+  document.body.className = mode === 'book' ? 'book' : '';
+
+  if (mode === 'book') {
+    title.classList.remove('develop');
+  } else {
+    title.classList.add('develop');
+  }
+
+  updateMask();
+}
+
+/* ========= 方向检测 ========= */
+function checkOrientation() {
+  const hint = document.getElementById('orientation-hint');
+  if (innerWidth > innerHeight) {
+    hint.classList.add('active');
+  } else {
+    hint.classList.remove('active');
+  }
+}
+
+/* ========= 事件 ========= */
+toggle.onclick = () => {
+  mode = mode === 'film' ? 'book' : 'film';
+  localStorage.setItem('mode', mode);
+  applyMode();
+};
+
+window.addEventListener('resize', () => {
+  updateFontSize();
+  updateMask();
+  checkOrientation();
+});
+
+/* ========= 初始化 ========= */
+applyMode();
+updateFontSize();
+checkOrientation();
+</script>
+</body>
+</html>
