@@ -18,50 +18,41 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap"
     rel="stylesheet"
   />
-
-  <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="film-mode">
 
-  <!-- 全屏噪点 -->
+  <!-- 全屏噪点（仅放映机模式显示） -->
   <div class="noise"></div>
 
-  <!-- 上下遮罩（3:4） -->
+  <!-- 上下遮罩 -->
   <div class="mask top"></div>
   <div class="mask bottom"></div>
 
+  <!-- 内容区域 -->
   <main id="content" class="locked">
-
-    <!-- 片头 -->
     <h1 id="filmTitle" class="film-title develop">Silent Movie</h1>
 
-    <!-- 正文 -->
     <div class="markdown">
       在这里，为了体现竖线动画的随机性，我们给:before和:after伪类分别设置了各自的动画步骤，在不同的时机点，竖线位置再水平方向上会进行平移。
       <br><br>
       接下来我们继续给噪点也添加上动画，同样也是通过keyframes帧动画来实现。
-      <br><br>
-      （你可以在这里继续加很多正文内容，用来测试滚动到结尾）
-      <br><br><br><br><br><br>
     </div>
 
-    <!-- 片尾 -->
-    <h2 id="filmEnd" class="film-end">end</h2>
-
+    <h2 class="film-end">end</h2>
   </main>
 
-  <!-- 模式切换 -->
+  <!-- 模式切换按钮 -->
   <button id="modeToggle">
     <i class="fa-solid fa-film"></i>
   </button>
 
+  <!-- JS（直接内联，不新建文件） -->
   <script>
     const body = document.body;
     const toggleBtn = document.getElementById('modeToggle');
     const icon = toggleBtn.querySelector('i');
     const title = document.getElementById('filmTitle');
-    const endTitle = document.getElementById('filmEnd');
     const content = document.getElementById('content');
 
     let mode = 'film';
@@ -73,7 +64,6 @@
         icon.className = 'fa-solid fa-film';
 
         title.classList.add('develop');
-        endTitle.classList.remove('show');
         content.classList.add('locked');
       } else {
         body.classList.add('book-mode');
@@ -81,7 +71,6 @@
         icon.className = 'fa-solid fa-book';
 
         title.classList.remove('develop');
-        endTitle.classList.add('show'); // 书本模式直接显示 end
         content.classList.remove('locked');
       }
     }
@@ -91,22 +80,10 @@
       applyMode();
     });
 
-    /* 片头显影完成 → 解锁正文 */
+    // 🎬 标题显影完成后，解锁正文滚动
     title.addEventListener('animationend', () => {
       if (mode === 'film') {
         content.classList.remove('locked');
-      }
-    });
-
-    /* 滚动到结尾 → 片尾显影 */
-    content.addEventListener('scroll', () => {
-      if (mode !== 'film') return;
-
-      const nearBottom =
-        content.scrollTop + content.clientHeight >= content.scrollHeight - 10;
-
-      if (nearBottom) {
-        endTitle.classList.add('show');
       }
     });
 
