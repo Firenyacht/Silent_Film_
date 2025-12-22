@@ -110,6 +110,62 @@ body {
   height: calc((100vh - (100vw * 4 / 3)) / 2);
 }
 
+/* ========= 竖线胶片层 ========= */
+
+.film {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  filter: blur(0.45px) drop-shadow(0 0 0 #fff1);
+}
+
+.film::before,
+.film::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120%;
+  height: 100%;
+  opacity: 0.5;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.15) 0 2px,
+    transparent 4px 37vmin
+  );
+}
+
+.film::before {
+  animation: film-scratch 0.45s steps(1) infinite;
+}
+
+.film::after {
+  left: 30%;
+  animation: effect-scratch 2s infinite;
+}
+
+/* 竖线动画 */
+@keyframes film-scratch {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-1%); }
+  40% { transform: translateX(2%); }
+  60% { transform: translateX(-3%); }
+  80% { transform: translateX(1%); }
+}
+
+@keyframes effect-scratch {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(-2%); }
+  60% { transform: translateX(5%); }
+  100% { transform: translateX(20%); }
+}
+
+/* 书本模式隐藏 */
+.book-mode .film {
+  display: none;
+}
+
 /* ========= 噪点 ========= */
 
 .noise::before {
@@ -137,3 +193,4 @@ body {
   font-size: 20px;
   z-index: 10;
 }
+
