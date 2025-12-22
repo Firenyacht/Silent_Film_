@@ -7,6 +7,10 @@
 
   <!-- Cinzel -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -45,12 +49,21 @@
 <div id="orientation-hint">请竖屏观看</div>
 
 <!-- 切换按钮 -->
-<button id="toggle">📽</button>
+<button id="toggle">
+  <i class="fa-regular fa-film"></i>
+</button>
 
 <script>
+/* ========= DOM ========= */
+const stage = document.getElementById('stage');
+const maskTop = document.getElementById('mask-top');
+const maskBottom = document.getElementById('mask-bottom');
+const toggleBtn = document.getElementById('toggle');
+const toggleIcon = toggleBtn.querySelector('i');
+const title = document.querySelector('.film-title');
+
 /* ========= 模式 ========= */
 let mode = localStorage.getItem('mode') || 'film';
-const title = document.querySelector('.film-title');
 
 /* ========= 字体线性映射 =========
    360px → 16px
@@ -59,34 +72,41 @@ const title = document.querySelector('.film-title');
 function updateFontSize() {
   const w = window.innerWidth;
   const size = 16 + (w - 360) * (20 / 440);
-  document.documentElement.style.setProperty('--base-font', Math.round(size) + 'px');
+  document.documentElement.style.setProperty(
+    '--base-font',
+    Math.round(size) + 'px'
+  );
 }
 
-/* ========= 遮罩（3:4）========= */
+/* ========= 遮罩规则（3:4）========= */
 function updateMask() {
-  if (mode === 'book') return;
+  if (mode !== 'film') return;
 
   const W = window.innerWidth;
   const H = window.innerHeight;
   const visibleH = W * 3 / 4;
   const maskH = Math.max(0, (H - visibleH) / 2);
 
+  stage.style.height = visibleH + 'px';
   maskTop.style.height = maskH + 'px';
   maskBottom.style.height = maskH + 'px';
-  stage.style.height = visibleH + 'px';
 }
 
 /* ========= 应用模式 ========= */
 function applyMode() {
-  document.body.className = mode === 'book' ? 'book' : '';
+  document.body.className = mode;
 
-  if (mode === 'book') {
-    title.classList.remove('develop');
-  } else {
+  if (mode === 'film') {
+    toggleIcon.className = 'fa-regular fa-film';
     title.classList.add('develop');
+    updateMask();
+  } else {
+    toggleIcon.className = 'fa-solid fa-book';
+    title.classList.remove('develop');
+    stage.style.height = '100vh';
+    maskTop.style.height = 0;
+    maskBottom.style.height = 0;
   }
-
-  updateMask();
 }
 
 /* ========= 方向检测 ========= */
@@ -100,7 +120,7 @@ function checkOrientation() {
 }
 
 /* ========= 事件 ========= */
-toggle.onclick = () => {
+toggleBtn.onclick = () => {
   mode = mode === 'film' ? 'book' : 'film';
   localStorage.setItem('mode', mode);
   applyMode();
